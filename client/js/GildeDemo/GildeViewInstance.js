@@ -1,8 +1,8 @@
 var gv = new GlideView("idGlideView", 1000, "div", 500, { TextTag: "a", TextHeight: 50 });
 var oSel = $$("sel");
-for (var i = 0; i <= gv._count; i++) {
+for (var i = 0; i < gv._count; i++) {
     var op = document.createElement("OPTION");
-    op.value = i; op.innerHTML = "展开第" + (i + 1) + "个";
+    op.value = i; op.innerHTML = "Unfold Position: " + (i + 1);
     oSel.appendChild(op);
 }
 
