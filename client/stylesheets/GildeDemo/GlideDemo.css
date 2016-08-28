@@ -1,0 +1,17 @@
+#idGlideView {
+    height:100px;
+    margin:100px auto;
+}
+#idGlideView div {
+    width:500px;
+    height:100px;
+}
+#idGlideView div a {
+    width:500px;
+    height:30px;
+    filter: alpha(opacity=50);
+    opacity: 0.5;
+    background:#000;
+    color:#fff;
+    text-decoration:none;
+}
