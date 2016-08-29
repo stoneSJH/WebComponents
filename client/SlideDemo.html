@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+	<title>Slide Demo</title>
+	<script src="js/SlideDemo/SlideView.js"></script>
+	<link rel="stylesheet" href="stylesheets/SlideDemo/SlideDemo.css">
+</head>
+<body>
+<div class="container" id="idContainer">
+	<table id="idSlider" border="0" cellpadding="0" cellspacing="0">
+		<tr>
+			<td><img src="./images/001.jpg"/></td>
+			<td><img src="./images/003.jpg"/></td>
+			<td><img src="./images/005.jpg"/></td>
+		</tr>
+	</table>
+</div>
+
+<br />
+
+<div class="container" id="idContainer2">
+	<ul id="idSlider2">
+		<li><img src="./images/002.jpg"/></li>
+		<li><img src="./images/004.jpg"/> </li>
+		<li><img src="./images/006.jpg"/> </li>
+		<li><img src="./images/007.jpg"/> </li>
+		<li><img src="./images/001.jpg"/> </li>
+	</ul>
+	<ul class="num" id="idNum">
+	</ul>
+</div>
+
+<br />
+
+<div>
+	<input id="idAuto" type="button" value="Stop" />
+	<input id="idPre" type="button" value="&lt;&lt;" />
+	<input id="idNext" type="button" value="&gt;&gt;" />
+	<select id="idTween">
+		<option value="0">Bounce</option>
+		<option value="1">Back</option>
+		<option value="2">Quart</option>
+	</select>
+</div>
+<script type="application/javascript" src="js/SlideDemo/SlideViewInstance.js"></script>
+</body>
+</html>
