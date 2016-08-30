@@ -1,10 +1,10 @@
 #idGlideView {
-    height:100px;
+    height:200px;
     margin:100px auto;
 }
 #idGlideView div {
     width:500px;
-    height:100px;
+    height:200px;
 }
 #idGlideView div a {
     width:500px;

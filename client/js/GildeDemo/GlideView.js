@@ -22,7 +22,7 @@ function addEventHandler(oTarget, sEventType, fnHandler) {
     } else {
         oTarget["on" + sEventType] = fnHandler;
     }
-};
+}
 
 var Class = {
     create: function() {
@@ -30,19 +30,18 @@ var Class = {
             this.initialize.apply(this, arguments);
         }
     }
-}
+};
 
 Object.extend = function(destination, source) {
     for (var property in source) {
         destination[property] = source[property];
     }
     return destination;
-}
+};
 
 
 var GlideView = Class.create();
 GlideView.prototype = {
-    //容器对象 容器宽度 展示标签 展示宽度
     initialize: function(obj, iWidth, sTag, iMaxWidth, options) {
         var oContainer = $$(obj), oThis=this, len = 0;
 
@@ -51,6 +50,9 @@ GlideView.prototype = {
         this.Step = Math.abs(this.options.Step);
         this.Time = Math.abs(this.options.Time);
         this.Showtext = false;//是否显示说明文本
+        this.mode = 0;//default mode
+        //MODE0 鼠标移出后恢复默认状态
+        //MODE1 鼠标移出后在当前状态固定
 
         this._list = oContainer.getElementsByTagName(sTag);
         len = this._list.length;
@@ -71,7 +73,9 @@ GlideView.prototype = {
             oList._target = this._width * i;//自定义一个属性放目标left
             oList.style.left = oList._target + "px";
             oList.style.position = "absolute";
-            addEventHandler(oList, "mouseover", function(){ oThis.Set.call(oThis, i); });
+            addEventHandler(oList, "mouseover", function(){
+                oThis.Set.call(oThis, i);
+            });
 
             //有说明文本
             if(oText){
@@ -79,7 +83,7 @@ GlideView.prototype = {
                 oText.style.bottom = oText._target + "px";
                 oText.style.position = "absolute";
             }
-        })
+        });
 
         //容器样式设置
         oContainer.style.width = iWidth + "px";
@@ -105,39 +109,86 @@ GlideView.prototype = {
     //相关设置
     Set: function(index) {
         if (index < 0) {
-            //鼠标移出容器返回默认状态
-            this.Each(function(oList, oText, i){ oList._target = this._width * i; if(oText){ oText._target = this._height_text; } })
+            if (this.mode == 0) {
+                //鼠标移出返回默认状态
+                this.Each(function (oList, oText, i) {
+                    oList._target = this._width * i;
+                    if (oText) {
+                        oText._target = this._height_text;
+                    }
+                })
+            }
+            else{
+                //鼠标移出固定
+            }
         } else {
             //鼠标移到某个滑动对象上
             this.Each(function(oList, oText, i){
                 oList._target = (i <= index) ? this._width_min * i : this._width_min * (i - 1) + this._width_max;
-                if(oText){ oText._target = (i == index) ? 0 : this._height_text; }
+                if(oText) {
+                    oText._target = (i == index) ? 0 : this._height_text;
+                }
             })
         }
         this.Move();
+    },
+    //
+    ChangeMode:function(mode){
+        this.mode = mode;
     },
     //移动
     Move: function() {
         clearTimeout(this._timer);
         var bFinish = true;//是否全部到达目标地址
         this.Each(function(oList, oText, i){
-            var iNow = parseInt(oList.style.left), iStep = this.GetStep(oList._target, iNow);
-            if (iStep != 0) { bFinish = false; oList.style.left = (iNow + iStep) + "px"; }
+            var iNow = parseInt(oList.style.left),
+                iStep = this.GetStep(oList._target, iNow);
+            if (iStep != 0) {
+                bFinish = false;
+                oList.style.left = (iNow + iStep) + "px";
+            }
             //有说明文本
             if (oText) {
-                iNow = parseInt(oText.style.bottom), iStep = this.GetStep(oText._target, iNow);
-                if (iStep != 0) { bFinish = false; oText.style.bottom = (iNow + iStep) + "px"; }
+                iNow = parseInt(oText.style.bottom);
+                iStep = this.GetStep(oText._target, iNow);
+                if (iStep != 0) {
+                    bFinish = false;
+                    oText.style.bottom = (iNow + iStep) + "px";
+                }
             }
-        })
+        });
         //未到达目标继续移动
-        if (!bFinish) { var oThis = this; this._timer = setTimeout(function(){ oThis.Move(); }, this.Time); }
+        if (!bFinish) {
+            var oThis = this;
+            this._timer = setTimeout(function(){
+                oThis.Move();
+            }, this.Time);
+        }
     },
     //获取步长
     GetStep: function(iTarget, iNow) {
         var iStep = (iTarget - iNow) / this.Step;
         if (iStep == 0) return 0;
-        if (Math.abs(iStep) < 1) return (iStep > 0 ? 1 : -1);
+        if (Math.abs(iStep) < 1)
+            return (iStep > 0 ? 1 : -1);
         return iStep;
+    },
+    //获取每个滑动对象移动总时间
+    GetTotalTime: function() {
+        var target = this._width_max;
+        var initialSpeed = target /this.Step;
+        //console.log(initialSpeed);
+        var base = 1 - initialSpeed / target;
+        //console.log(base);
+        var exp = 2;
+        for (; exp <= 10000; exp++){
+            if (Math.pow(base, exp) - Math.pow(base, exp - 1) > -0.4 / (target - initialSpeed)){
+                break;
+            }
+        }
+        var totalTime = this.Time * exp;
+        //console.log(totalTime);
+        return totalTime;
     },
     Each:function(fun) {
         for (var i = 0; i < this._count; i++)
