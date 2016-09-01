@@ -10,6 +10,8 @@ var canvas = document.createElement( 'canvas' ),
     loaderY = height / 2 - loaderHeight / 2,
     particles = [],
     particleLift = 180,
+    particleXSpeedRange = 100,
+    particleXAccelerationRange = 10,
     particleRate = 4,
     hueStart = 0,
     hueEnd = 120,
@@ -21,36 +23,39 @@ canvas.width = width;
 canvas.height = height;
 ctx.globalCompositeOperation = 'lighter';
 
+
 function rand( rMi, rMa ) {
-    return ~~((Math.random()*(rMa-rMi+1))+rMi);
+    return (Math.random() * (rMa - rMi + 1)) + rMi;
 }
 
 function updateLoader() {
     if( loaded < 100 ) {
         loaded += loaderSpeed;
-    } else {
+    }
+    else {
+        //是否开启循环
         loaded = 0;
     }
 }
 
 function renderLoader() {
     ctx.fillStyle = '#000';
-    ctx.fillRect( loaderX, loaderY, loaderWidth, loaderHeight );
+    ctx.fillRect( loaderX, loaderY, loaderWidth, loaderHeight );//初始化填充进度条为黑色
 
-    hue = hueStart + ( loaded / 100 ) * ( hueEnd - hueStart );
+    hue = hueStart + ( loaded / 100 ) * ( hueEnd - hueStart );//计算当前位置对应颜色
 
     var newWidth = ( loaded / 100 ) * loaderWidth;
     ctx.fillStyle = 'hsla(' + hue + ', 100%, 40%, 1)';
     ctx.fillRect( loaderX, loaderY, newWidth, loaderHeight );
 
-    ctx.fillStyle = '#444';
-    ctx.fillRect( loaderX, loaderY, newWidth, loaderHeight / 2 );
+    ctx.fillStyle = '#222';
+    ctx.fillRect( loaderX, loaderY, newWidth, loaderHeight / 2 );//将进度条上半层添加亮色以形成立体效果
 }
 
 function Particle() {
     this.x = loaderX + ( ( loaded / 100 ) * loaderWidth ) - rand( 0, 1 );
     this.y = height / 2 + rand( 0, loaderHeight ) - loaderHeight / 2;
-    this.vx = ( rand( 0, 4 ) - 2 ) / 100;
+    this.vx = ( rand( 0, particleXSpeedRange ) - particleXSpeedRange / 2 ) / 100;
     this.vy = ( rand( 0, particleLift ) - particleLift * 2 ) / 100;
     this.width = rand( 1, 4 ) / 2;
     this.height = rand( 1, 4 ) / 2;
@@ -58,12 +63,12 @@ function Particle() {
 }
 
 Particle.prototype.update = function( i ) {
-    this.vx += ( rand( 0, 6 ) - 3 ) / 100;
+    this.vx += ( rand( 0, particleXAccelerationRange ) - particleXAccelerationRange / 2 ) / 100;
     this.vy += gravity;
     this.x += this.vx;
     this.y += this.vy;
 
-    if( this.y > height ) {
+    if( this.y > height ) { //销毁超出边界的particle
         particles.splice( i, 1 );
     }
 };
@@ -85,7 +90,7 @@ function updateParticles() {
     while( i-- ) {
         var p = particles[ i ];
         p.update( i );
-    };
+    }
 }
 
 function renderParticles() {
@@ -99,7 +104,6 @@ function renderParticles() {
 function clearCanvas() {
     ctx.clearRect( 0, 0, width, height );
 }
-
 
 function loop() {
     requestAnimationFrame( loop );
