@@ -1,3 +1,8 @@
+body {
+    -moz-user-select : none;
+    -webkit-user-select: none;
+}
+
 .container, .container img{
     width:280px;
     height:200px;

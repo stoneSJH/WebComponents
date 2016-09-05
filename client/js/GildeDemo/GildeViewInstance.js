@@ -4,7 +4,8 @@ var mSel = $$("mode");
 
 for (var i = 0; i < gv._count; i++) {
     var op = document.createElement("OPTION");
-    op.value = i; op.innerHTML = "Unfold Position: " + (i + 1);
+    op.value = i;
+    op.innerHTML = "Unfold Position: " + (i + 1);
     oSel.appendChild(op);
 }
 
