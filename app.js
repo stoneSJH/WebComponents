@@ -1,5 +1,6 @@
 var express = require('express');
 var path = require('path');
+var http = require('http');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
@@ -56,5 +57,8 @@ app.use(function(err, req, res, next) {
   });
 });
 
+http.createServer(app).listen('3000', function () {
+  console.log('Express server listening on port 3000');
+});
 
 module.exports = app;
